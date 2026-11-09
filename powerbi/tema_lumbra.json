@@ -1,0 +1,16 @@
+{
+  "name": "LUMBRA FW27",
+  "dataColors": [
+    "#5B7FA6",
+    "#B8703F",
+    "#5C7A52",
+    "#A8724A",
+    "#9C7A3C",
+    "#4A3B2E",
+    "#8FA8C4",
+    "#D1A67D"
+  ],
+  "background": "#F6F1E9",
+  "foreground": "#2B2018",
+  "tableAccent": "#A8724A"
+}

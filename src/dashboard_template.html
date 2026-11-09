@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUMBRA · Estudio cuantitativo FW27</title>
+<script>
+/* Chart.js v4.4.4 embebido localmente (no depende de internet ni de CDNs externas) */
+__CHARTJS_SOURCE__
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+  :root{
+    --cream:#F6F1E9; --espresso:#2B2018; --espresso-soft:#4A3B2E;
+    --terracotta:#A8724A; --gold:#9C7A3C;
+    --nordicos:#5B7FA6; --dach:#B8703F; --benelux:#5C7A52; --line:#DCD3C2;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--cream); color:var(--espresso); font-family:'Work Sans', sans-serif; line-height:1.5; }
+  header{ padding:44px 40px 26px; border-bottom:1px solid var(--line); }
+  header .eyebrow{ font-size:13px; color:var(--gold); margin-bottom:6px; }
+  header h1{ font-family:'Fraunces', serif; font-weight:500; font-style:italic; font-size:clamp(26px,4vw,40px); margin:0 0 8px; max-width:720px; }
+  header p{ margin:0; max-width:640px; color:var(--espresso-soft); font-size:14.5px; }
+
+  nav.tabs{ display:flex; gap:6px; padding:0 40px; border-bottom:1px solid var(--line); background:#fff; }
+  nav.tabs button{
+    font-family:'Work Sans'; font-size:14px; font-weight:600; padding:14px 18px; border:none;
+    background:none; color:var(--espresso-soft); cursor:pointer; border-bottom:3px solid transparent;
+  }
+  nav.tabs button.active{ color:var(--espresso); border-bottom-color:var(--terracotta); }
+
+  main{ max-width:1180px; margin:0 auto; padding:28px 40px 80px; }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; }
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:860px){ .grid-2{ grid-template-columns:1fr; } }
+  .kpi-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+  @media (max-width:860px){ .kpi-grid{ grid-template-columns:1fr 1fr; } }
+  .kpi-card{ background:#fff; border:1px solid var(--line); border-left:4px solid var(--terracotta); border-radius:4px; padding:16px; }
+  .kpi-card .kpi-q{ font-size:11.5px; color:var(--espresso-soft); margin-bottom:6px; line-height:1.4; }
+  .kpi-card .kpi-v{ font-size:23px; font-weight:700; color:var(--espresso); }
+  .kpi-card .kpi-f{ font-size:10px; color:var(--espresso-soft); margin-top:5px; opacity:0.8; }
+
+  .chart-card{ background:#fff; border:1px solid var(--line); border-radius:4px; padding:22px; margin-bottom:20px; }
+  .chart-card .card-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:4px; }
+  .chart-card h2{ font-family:'Fraunces', serif; font-weight:500; font-size:18px; margin:0; }
+  .chart-card .meta{ font-size:12px; color:var(--espresso-soft); margin:4px 0 14px; }
+  .chart-wrap{ height:300px; }
+  .btn-export{
+    font-family:'Work Sans'; font-size:12px; padding:6px 12px; border-radius:4px;
+    border:1px solid var(--line); background:#FBF8F2; color:var(--espresso); cursor:pointer; white-space:nowrap;
+  }
+  .btn-export:hover{ background:var(--espresso); color:#fff; }
+  .coverage-note{ font-size:11.5px; color:var(--gold); margin-top:10px; }
+  .caption{ font-size:12.5px; color:var(--espresso-soft); margin-top:10px; border-top:1px dashed var(--line); padding-top:8px; }
+
+  .controls{ display:flex; flex-wrap:wrap; gap:22px; align-items:flex-end; background:#fff; border:1px solid var(--line); border-radius:4px; padding:18px 22px; margin-bottom:22px; }
+  .control-group{ display:flex; flex-direction:column; gap:8px; }
+  .control-group label{ font-size:12px; color:var(--espresso-soft); font-weight:600; }
+  .pills{ display:flex; gap:8px; flex-wrap:wrap; }
+  .pill{ border:1px solid var(--line); background:#fff; color:var(--espresso); padding:6px 14px; border-radius:20px; font-size:13px; cursor:pointer; }
+  .pill.active{ background:var(--espresso); color:#fff; border-color:var(--espresso); }
+  select, input[type=number]{ font-family:'Work Sans'; font-size:14px; padding:8px 10px; border-radius:4px; border:1px solid var(--line); background:#fff; color:var(--espresso); }
+  select{ min-width:260px; }
+  .toggle{ display:flex; border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+  .toggle button{ font-family:'Work Sans'; font-size:13px; padding:8px 16px; border:none; background:#fff; color:var(--espresso); cursor:pointer; }
+  .toggle button.active{ background:var(--terracotta); color:#fff; }
+  .toggle button:disabled{ opacity:.35; cursor:not-allowed; }
+
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th{ text-align:left; padding:9px 11px; border-bottom:2px solid var(--espresso); font-weight:600; background:#FBF8F2; position:sticky; top:0; }
+  td{ padding:9px 11px; border-bottom:1px solid var(--line); vertical-align:top; }
+  td a{ color:var(--terracotta); }
+  .table-wrap{ max-height:400px; overflow:auto; border:1px solid var(--line); border-radius:4px; }
+
+  .sim-grid{ display:grid; grid-template-columns:340px 1fr; gap:24px; }
+  @media (max-width:860px){ .sim-grid{ grid-template-columns:1fr; } }
+  .sim-form{ background:#fff; border:1px solid var(--line); border-radius:4px; padding:22px; display:flex; flex-direction:column; gap:16px; }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field label{ font-size:12.5px; font-weight:600; color:var(--espresso-soft); }
+  .field input, .field select{ width:100%; }
+  .field .hint{ font-size:11px; color:var(--gold); }
+  .badge-fuente{ display:inline-block; font-size:10.5px; background:#EEE6D8; color:var(--espresso-soft); padding:2px 7px; border-radius:10px; margin-left:6px; }
+  .badge-input{ display:inline-block; font-size:10.5px; background:#E4EEF6; color:#2F5876; padding:2px 7px; border-radius:10px; margin-left:6px; }
+
+  .sim-outputs{ background:var(--espresso); color:#fff; border-radius:4px; padding:24px; }
+  .out-row{ display:flex; justify-content:space-between; align-items:baseline; padding:11px 0; border-bottom:1px solid rgba(255,255,255,.14); }
+  .out-row:last-child{ border-bottom:none; }
+  .out-row .out-label{ font-size:13px; color:#D8C9AE; }
+  .out-row .out-formula{ font-size:10.5px; color:#B9A98A; display:block; margin-top:2px; }
+  .out-row .out-value{ font-family:'Fraunces', serif; font-size:19px; font-weight:600; text-align:right; }
+  .out-row.total .out-value{ color:#F2D9C3; font-size:23px; }
+
+  footer{ padding:22px 40px 60px; color:var(--espresso-soft); font-size:12px; max-width:1180px; margin:0 auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">LUMBRA — Fall/Winter 2027</div>
+  <div class="coverage-note" style="margin:6px 0 10px;"><strong>Proyecto de portafolio.</strong> La marca LUMBRA, sus modelos, costes, precios y plan de compra son <strong>ficticios</strong>. Los datos de mercado (Statista, Euromonitor, Eurostat…) y de competencia son de fuentes públicas citadas en cada fila.</div>
+  <h1>Estudio cuantitativo por país</h1>
+  <p>Complemento numérico al estudio cualitativo de buyer personas (Nórdicos · DACH · Benelux). Cada cifra viene de una fuente citada; los supuestos que tú introduces se marcan aparte.</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="resumen">Resumen</button>
+  <button class="tab-btn" data-tab="simulador">Simulador de producto</button>
+  <button class="tab-btn" data-tab="competencia">Competencia</button>
+  <button class="tab-btn" data-tab="ranking">Ranking de modelos</button>
+  <button class="tab-btn" data-tab="espana">España</button>
+  <button class="tab-btn" data-tab="tendencias">Tendencias por país</button>
+  <button class="tab-btn" data-tab="explorar">Explorar datos</button>
+
+</nav>
+
+<main>
+
+  <section id="tab-resumen" class="tab-panel active">
+    <div class="controls" style="margin-bottom:20px;">
+      <div class="control-group">
+        <label>Moneda (Poder de compra y Mapa de oportunidad)</label>
+        <div class="toggle" id="toggle-moneda-resumen">
+          <button id="btn-resumen-usd">USD</button>
+          <button id="btn-resumen-eur" class="active">EUR</button>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2">
+
+      <div class="chart-card">
+        <div class="card-head">
+          <div><h2>Poder de compra</h2><div class="meta">PIB per cápita nominal, 2025 (FMI) — los 10 mercados</div></div>
+          <button class="btn-export" data-chart="chartPib">Descargar PNG</button>
+        </div>
+        <div class="chart-wrap"><canvas id="chartPib"></canvas></div>
+        <div class="caption" id="captionPib"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-head">
+          <div><h2>Mapa de oportunidad</h2><div class="meta">Tamaño de mercado vs. crecimiento anual — burbuja = PIB per cápita. <strong>Aviso: cada país usa la definición de mercado más granular que se encontró para él (eCommerce total, Fashion eCommerce, Luxury Goods, Apparel...), de años distintos — no son directamente comparables entre sí en tamaño absoluto. Pasa el cursor sobre cada burbuja para ver la definición y el año exactos antes de comparar dos países.</strong></div></div>
+          <button class="btn-export" data-chart="chartScatter">Descargar PNG</button>
+        </div>
+        <div class="chart-wrap"><canvas id="chartScatter"></canvas></div>
+        <div class="coverage-note">Noruega y Holanda no aparecen aquí: no hay una tasa de crecimiento directamente comparable al mismo mercado en las fuentes recopiladas. Este gráfico es un escenario exploratorio para ubicar cada país relativo a su propio contexto — no una estimación validada del mercado de calzado accesible para LUMBRA.</div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-head">
+          <div><h2>Cuota de lujo (proxy de margen)</h2><div class="meta">% de ventas de lujo dentro de Apparel/Footwear</div></div>
+          <button class="btn-export" data-chart="chartLujo">Descargar PNG</button>
+        </div>
+        <div class="chart-wrap"><canvas id="chartLujo"></canvas></div>
+        <div class="coverage-note">Disponible para 6 de 10 países. No es margen real: es la mejor aproximación pública a poder de fijación de precio premium.</div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-head">
+          <div><h2>Riesgo de coste operativo</h2><div class="meta">Tasa de devolución en eCommerce de moda (Statista, 2022)</div></div>
+          <button class="btn-export" data-chart="chartDevol">Descargar PNG</button>
+        </div>
+        <div class="chart-wrap"><canvas id="chartDevol"></canvas></div>
+        <div class="coverage-note">Solo disponible para Alemania, Austria y Suiza — es el mayor coste oculto identificado en el estudio (hasta 45% en Suiza).</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="tab-simulador" class="tab-panel">
+    <div class="sim-grid">
+      <div class="sim-form">
+        <div class="field">
+          <label>Moneda del simulador</label>
+          <div class="toggle" id="simMonedaToggle">
+            <button data-moneda="USD">USD</button>
+            <button data-moneda="EUR" class="active">EUR</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Canal de venta</label>
+          <div class="toggle" id="simCanalToggle">
+            <button data-canal="ecommerce" class="active">E-commerce (tienda online propia)</button>
+            <button data-canal="presencial">Presencial (B2B)</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Categoría de producto <span class="badge-fuente">dato del caso (ficticio)</span></label>
+          <select id="simCategoria">
+            <option value="">— Personalizado (escribe tú Precio y Coste) —</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>País objetivo</label>
+          <select id="simPais"></select>
+        </div>
+
+        <div class="field">
+          <label>Cómo estimar unidades vendidas</label>
+          <div class="toggle" id="simModoToggle">
+            <button data-modo="manual" class="active">Manual</button>
+            <button data-modo="auto">Automático</button>
+          </div>
+        </div>
+
+        <div class="field" id="campoManual">
+          <label>Unidades a vender (anual) <span class="badge-input">tu dato</span></label>
+          <input type="number" id="simUnidadesManual" value="500" min="0">
+        </div>
+
+        <div class="field" id="campoAuto" style="display:none;">
+          <label>Cuota objetivo del gasto TOTAL en lujo del país (%) <span class="badge-input">tu supuesto</span></label>
+          <div class="hint" style="margin-bottom:4px;">Ojo: es tu cuota sobre TODO el gasto en lujo del país (miles de millones de €), no sobre tus ventas — por eso el rango es tan pequeño. 0,5% de un mercado entero ya es mucho para una marca nueva.</div>
+          <input type="range" id="simCuotaObjetivo" min="0.001" max="0.5" step="0.001" value="0.02">
+          <div class="hint" id="simCuotaObjetivoValor">0.020%</div>
+          <div class="hint" id="simAutoDetalle"></div>
+        </div>
+
+        <div class="field">
+          <label id="labelSimPrecio">PVP al público, con IVA (<span id="labelMonedaPrecio">EUR</span>) <span id="badgePrecio" class="badge-input">tu dato</span></label>
+          <input type="number" id="simPrecio" value="155" min="0">
+        </div>
+
+        <div class="field">
+          <label>Coste de producción por unidad (<span id="labelMonedaCoste">EUR</span>) <span id="badgeCoste" class="badge-input">tu dato</span></label>
+          <input type="number" id="simCoste" value="52" min="0">
+        </div>
+
+        <div class="field" id="campoIva">
+          <label>IVA del país (%) <span id="badgeIva" class="badge-fuente">dato real</span></label>
+          <input type="number" id="simIva" value="21" min="0" max="30" step="0.1">
+        </div>
+
+        <div class="field">
+          <label>Coste adicional de aprovisionamiento (<span id="labelMonedaComision">EUR</span>) <span class="badge-fuente">supuesto del caso</span></label>
+          <div class="hint" style="margin-bottom:4px;">No está en el Excel de costes de LUMBRA — es lo que se le da a la diseñadora para localizar proveedores. Se suma al coste de producción, sin importar el canal.</div>
+          <input type="number" id="simComision" value="10" min="0">
+        </div>
+
+        <div class="field" id="campoComisionAgente" style="display:none;">
+          <label>Comisión del agente de ventas (%) <span class="badge-input">tu dato</span></label>
+          <div class="hint" style="margin-bottom:4px;">Solo aplica al canal Presencial/B2B — se descuenta del ingreso neto, antes del impacto de devolución.</div>
+          <input type="number" id="simComisionAgente" value="__COMISION_AGENTE_PCT__" min="0" max="100" step="0.1">
+        </div>
+
+        <div class="field" id="campoCosteTransporte" style="display:none;">
+          <label>Coste de transporte (€/par) <span class="badge-fuente">promedio real, ver nota</span></label>
+          <div class="hint" style="margin-bottom:4px;">Promedio de envío por lote (12-100 pares) a Alemania/Holanda, Bélgica y Austria-Dinamarca-Suecia — calculadora BFG, 2026. No cubre los 11 países uno por uno; varía bastante por país y peso, así que se usa un promedio en vez de 11 cifras distintas. Editable si tienes un dato más específico.</div>
+          <input type="number" id="simCosteTransporte" value="__COSTE_TRANSPORTE__" min="0" step="0.01">
+        </div>
+
+        <div class="field">
+          <label>Modo de devolución</label>
+          <div class="toggle" id="simDevolModoToggle">
+            <button data-devolmodo="fijo" class="active">Valor fijo</button>
+            <button data-devolmodo="montecarlo">Rango (Monte Carlo)</button>
+          </div>
+        </div>
+
+        <div class="field" id="campoDevolFija">
+          <label>Tasa de devolución (%) <span id="badgeDevolucion" class="badge-fuente">fuente</span></label>
+          <input type="number" id="simDevolucion" value="20" min="0" max="100" step="0.1">
+        </div>
+
+        <div class="field" id="campoDevolRango" style="display:none;">
+          <label>Rango de tasa de devolución (%) <span id="badgeDevolucionRango" class="badge-fuente">fuente</span></label>
+          <div style="display:flex; gap:8px;">
+            <input type="number" id="simDevolucionMin" min="0" max="100" step="0.1" placeholder="Mín.">
+            <input type="number" id="simDevolucionMax" min="0" max="100" step="0.1" placeholder="Máx.">
+          </div>
+          <div class="hint" id="simDevolRangoHint"></div>
+        </div>
+
+        <div class="field">
+          <label>Coste logístico por devolución (<span id="labelMonedaCosteDevol">EUR</span>) <span class="badge-input">tu dato</span></label>
+          <input type="number" id="simCosteDevolucion" value="13" min="0">
+        </div>
+      </div>
+
+      <div class="sim-outputs">
+        <div class="out-row" style="border-bottom:2px solid rgba(255,255,255,.3); margin-bottom:6px;">
+          <div><div class="out-label">Unidades estimadas</div><span class="out-formula" id="f-unidades"></span></div>
+          <div class="out-value" id="o-unidades">—</div>
+        </div>
+
+        <div id="simDetOutputs">
+        <div class="out-row">
+          <div><div class="out-label" id="labelIngresoBruto">Ingreso bruto (PVP con IVA)</div><span class="out-formula">unidades × precio</span></div>
+          <div class="out-value" id="o-ingreso">—</div>
+        </div>
+        <div class="out-row">
+          <div><div class="out-label" id="labelDeduccionCanal">IVA a remitir</div><span class="out-formula" id="formulaDeduccionCanal">ingreso bruto × IVA/(1+IVA)</span></div>
+          <div class="out-value" id="o-deduccioncanal">—</div>
+        </div>
+        <div class="out-row">
+          <div><div class="out-label">Ingreso neto</div><span class="out-formula">ingreso bruto − IVA / comisión de canal</span></div>
+          <div class="out-value" id="o-ingresoneto">—</div>
+        </div>
+        <div class="out-row">
+          <div><div class="out-label">Coste de producción total</div><span class="out-formula">unidades × (coste unitario + coste adicional de aprovisionamiento)</span></div>
+          <div class="out-value" id="o-costeprod">—</div>
+        </div>
+        <div class="out-row">
+          <div><div class="out-label">Margen bruto</div><span class="out-formula">ingreso neto − coste de producción</span></div>
+          <div class="out-value" id="o-margenbruto">—</div>
+        </div>
+        <div class="out-row">
+          <div><div class="out-label">Unidades devueltas (estimado)</div><span class="out-formula">unidades × tasa de devolución</span></div>
+          <div class="out-value" id="o-devoluciones">—</div>
+        </div>
+        <div class="out-row">
+          <div><div class="out-label">Ingreso perdido por devoluciones</div><span class="out-formula">unidades devueltas × ingreso neto por unidad</span></div>
+          <div class="out-value" id="o-ingresoperdido">—</div>
+        </div>
+        <div class="out-row">
+          <div><div class="out-label">Coste logístico de devoluciones</div><span class="out-formula">unidades devueltas × coste logístico por devolución</span></div>
+          <div class="out-value" id="o-costedevol">—</div>
+        </div>
+        <div class="out-row" id="rowComisionAgente" style="display:none;">
+          <div><div class="out-label">Comisión del agente de ventas</div><span class="out-formula">ingreso neto × % comisión (solo Presencial/B2B)</span></div>
+          <div class="out-value" id="o-comisionagente">—</div>
+        </div>
+        <div class="out-row" id="rowCosteTransporte" style="display:none;">
+          <div><div class="out-label">Coste de transporte</div><span class="out-formula">unidades × coste de transporte por par (solo Presencial/B2B)</span></div>
+          <div class="out-value" id="o-costetransporte">—</div>
+        </div>
+        <div class="out-row total">
+          <div><div class="out-label">Margen neto estimado</div><span class="out-formula" id="f-margenneto">margen bruto − ingreso perdido − coste logístico</span></div>
+          <div class="out-value" id="o-margenneto">—</div>
+        </div>
+        <div class="out-row">
+          <div><div class="out-label">Margen neto sobre ingreso bruto</div><span class="out-formula">margen neto ÷ ingreso bruto</span></div>
+          <div class="out-value" id="o-margenpct">—</div>
+        </div>
+        </div>
+
+        <div id="simMcOutputs" style="display:none;">
+          <div class="out-row">
+            <div><div class="out-label">Margen neto medio por unidad</div><span class="out-formula" id="mc-n-simulaciones"></span></div>
+            <div class="out-value" id="mc-media">—</div>
+          </div>
+          <div class="out-row">
+            <div><div class="out-label">Peor caso (percentil 10)</div><span class="out-formula">10% de los escenarios cae por debajo de esto</span></div>
+            <div class="out-value" id="mc-p10">—</div>
+          </div>
+          <div class="out-row">
+            <div><div class="out-label">Mejor caso (percentil 90)</div><span class="out-formula">10% de los escenarios supera esto</span></div>
+            <div class="out-value" id="mc-p90">—</div>
+          </div>
+          <div class="out-row">
+            <div><div class="out-label">Desviación estándar</div><span class="out-formula">dispersión de los resultados por unidad</span></div>
+            <div class="out-value" id="mc-std">—</div>
+          </div>
+          <div class="out-row total">
+            <div><div class="out-label">Margen neto total estimado</div><span class="out-formula">margen medio por unidad × unidades estimadas ↑</span></div>
+            <div class="out-value" id="mc-total">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card" id="simMcChartCard" style="display:none;">
+      <div class="card-head">
+        <div><h2>Distribución de escenarios (Monte Carlo)</h2><div class="meta">Margen neto por unidad en 10.000 simulaciones, muestreando la tasa de devolución dentro del rango indicado</div></div>
+        <button class="btn-export" id="btn-mc-csv">Descargar CSV</button>
+      </div>
+      <div class="chart-wrap"><canvas id="chartMonteCarlo"></canvas></div>
+    </div>
+
+    <p class="coverage-note" style="margin-top:16px;">Todo lo marcado "tu dato" o "tu supuesto" lo escribes tú — no viene de ninguna fuente. Lo marcado "fuente" se rellena automáticamente cuando existe un dato real de mercado para ese país (Alemania, Austria y Suiza tienen tasa de devolución real); en el resto, ajusta el valor con tu propio criterio.</p>
+  </section>
+
+  <section id="tab-explorar" class="tab-panel">
+    <div class="controls">
+      <div class="control-group">
+        <label>Segmento</label>
+        <div class="pills" id="pills-segmento"></div>
+      </div>
+      <div class="control-group" style="flex:1; min-width:260px;">
+        <label>Indicador</label>
+        <select id="select-indicador"></select>
+      </div>
+      <div class="control-group">
+        <label>Moneda</label>
+        <div class="toggle" id="toggle-moneda">
+          <button id="btn-usd">USD</button>
+          <button id="btn-eur" class="active">EUR</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="card-head">
+        <div><h2 id="chart-title">—</h2><div class="meta" id="chart-meta"></div></div>
+        <button class="btn-export" data-chart="chartExplorar">Descargar PNG</button>
+      </div>
+      <div class="chart-wrap"><canvas id="chartExplorar"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="card-head">
+        <h2>Datos subyacentes</h2>
+        <button class="btn-export" id="btn-csv">Descargar CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>País</th><th>Valor</th><th>Año</th><th>Fuente</th></tr></thead>
+          <tbody id="tabla-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-competencia" class="tab-panel">
+    <div class="controls">
+      <div class="control-group" style="flex:1; min-width:220px;">
+        <label>Categoría de producto</label>
+        <select id="compCategoria"></select>
+      </div>
+      <div class="control-group" style="flex:1; min-width:220px;">
+        <label>País</label>
+        <select id="compPais"></select>
+      </div>
+      <div class="control-group" style="flex:1; min-width:220px;">
+        <label>Ciudad</label>
+        <select id="compCiudad"></select>
+      </div>
+    </div>
+    <div class="hint" id="compFiltroHint" style="margin:-8px 0 14px; display:none;"></div>
+
+    <div class="chart-card">
+      <h2>Resumen — <span id="compResumenCategoria"></span></h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Indicador</th><th>Valor</th></tr></thead>
+          <tbody id="compResumenBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="card-head">
+        <div><h2 id="compChartTitle">—</h2><div class="meta">PVP con IVA en zona euro — LUMBRA resaltada frente a cada competidor real</div></div>
+        <button class="btn-export" data-chart="chartCompetencia">Descargar PNG</button>
+      </div>
+      <div class="chart-wrap" id="compChartWrap"><canvas id="chartCompetencia"></canvas></div>
+      <div class="legend-note">
+        <span><span class="dot" style="background:#A8724A"></span>LUMBRA</span>
+        <span><span class="dot" style="background:#8FA8C4"></span>Competencia — tienda física</span>
+        <span><span class="dot" style="background:#C7D4E0"></span>Competencia — solo online</span>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2>Lectura comercial</h2>
+      <div class="hint" style="margin-bottom:8px; color:var(--terracotta);">⚠ Redactada sobre el precio del planner, todavía no sobre el PVP vigente — el texto puede no reflejar el número actualizado de arriba.</div>
+      <p id="compLectura" style="font-size:13.5px; line-height:1.6; color:var(--espresso-soft); margin:0;"></p>
+    </div>
+
+    <div class="chart-card">
+      <div class="card-head">
+        <h2>Detalle por modelo</h2>
+        <button class="btn-export" id="btn-comp-csv">Descargar CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tipo</th><th>Marca</th><th>País (origen)</th><th>Modelo</th><th>PVP (€)</th><th>Δ vs LUMBRA (€)</th><th>Δ vs LUMBRA (%)</th><th>Factibilidad</th><th>Canal online</th><th>Canal físico</th><th>Cuota de mercado</th><th>Fuente</th></tr></thead>
+          <tbody id="compTablaBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-tendencias" class="tab-panel">
+    <div class="chart-card">
+      <h2>Categoría de calzado dominante, por país</h2>
+      <div class="meta">Fuente: Statista Market Insights, página específica de cada país — cifras exactas bloqueadas por la fuente en varios casos</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>País</th><th>Categoría dominante</th><th>Cifra</th><th>Marcas notables</th></tr></thead>
+          <tbody id="tendTablaBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2 id="tendTituloTrend"></h2>
+      <p id="tendTextoTrend" style="font-size:13.5px; line-height:1.6; color:var(--espresso-soft); margin:10px 0 0;"></p>
+    </div>
+
+    <div class="chart-card" style="border-left:4px solid var(--terracotta);">
+      <h2>Lo que esto significa para LUMBRA</h2>
+      <p id="tendRecomendacion" style="font-size:13.5px; line-height:1.6; color:var(--espresso-soft); margin:10px 0 0;"></p>
+    </div>
+  </section>
+
+  <section id="tab-espana" class="tab-panel">
+    <div class="kpi-grid" id="espanaKpis"></div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <h2>¿Cómo se reparte el mercado de moda en España?</h2>
+        <div class="meta">Fuente: Acotex, "El Comercio Textil en Cifras 2025" — mercado total 11.107M€</div>
+        <div class="chart-wrap"><canvas id="chartEspanaCanal"></canvas></div>
+        <div class="coverage-note">El canal multimarca (el más parecido a B2B tradicional) cae a 7% del mercado mientras el online sube a 17% — argumento real para priorizar online al entrar a España.</div>
+      </div>
+      <div class="chart-card">
+        <h2>¿A quién le exporta España, y quién paga más por par?</h2>
+        <div class="meta">Fuente: Revista del Calzado / Dirección General de Aduanas, 2024 (crecimiento); comparación de precio histórica 2018</div>
+        <div class="chart-wrap"><canvas id="chartExportRanking"></canvas></div>
+        <div class="coverage-note" id="espanaExportNota"></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2>Margen neto real de LUMBRA por categoría — Alemania, Francia e Italia</h2>
+      <div class="meta">IVA e impacto de devolución real, por país. <strong>Alemania: devolución real (Statista 2022). Francia e Italia: devolución ESTIMADA (27,5%), sin dato propio confirmado — incluidos igual porque son el 1º y 2º comprador de calzado español, con la salvedad marcada.</strong></div>
+      <div class="chart-wrap"><canvas id="chartMargenExport"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <h2>España — margen por canal, Online vs. Presencial/B2B</h2>
+      <div class="meta">Canal presencial usa el multiplicador wholesale vigente (__MULT_TXT__x) y descuenta la comisión del agente de ventas (__COMISION_TXT__%) y el coste de transporte (__TRANSPORTE_TXT__€/par), igual que el Simulador. Devolución real por canal: Online 23,7% / Presencial 5,6% (ZigZag + Retail Economics, 2025).</div>
+      <div class="chart-wrap"><canvas id="chartMargenEspanaCanal"></canvas></div>
+    </div>
+
+    <div class="chart-card" style="border-left:4px solid var(--terracotta);">
+      <h2>Competencia en España — precio del Barefoot, LUMBRA vs. las 2 marcas españolas comparables</h2>
+      <div class="meta">Único par de competidores con precio confirmado específicamente en el mercado español (Zalando España / sitio oficial), misma categoría Barefoot</div>
+      <div class="chart-wrap"><canvas id="chartCompetenciaEspana"></canvas></div>
+      <p style="font-size:13.5px; line-height:1.6; color:var(--espresso-soft); margin:14px 0 0;">
+        Las 19 marcas del benchmark general (ver pestaña Competencia) tienen presencia confirmada en el
+        mercado español — Satorisan, Saye, Alohas y Camper por ser de origen español; Birkenstock, UGG,
+        Clarks, Groundies, Vagabond, Be Lenka, INUIKII, Veja, ATP Atelier, Angulus, Blundstone y Flattered
+        vía Zalando España, Lyst.es o Miinto España; Vivobarefoot con tienda propia en español y venta en
+        Decathlon España. Se suman dos marcas españolas con el mismo perfil que Pikolinos (piel/confort
+        tradicional extendido a una línea "Barefoot"): <strong>Pikolinos</strong> (modelo Betera, 119,95€) e
+        <strong>Hispanitas</strong> (línea Transitional Barefoot, 119,90€) — ambas por debajo del Barefoot de
+        LUMBRA (__PVP_BAREFOOT__€), confirmando que compiten más abajo en precio.
+      </p>
+    </div>
+  </section>
+
+  <section id="tab-ranking" class="tab-panel">
+    <div class="chart-card" style="border-left:4px solid var(--terracotta);">
+      <h2>__RANKING_HALLAZGO_TITULO__</h2>
+      <p style="font-size:13.5px; line-height:1.6; color:var(--espresso-soft); margin:10px 0 0;">
+        __RANKING_HALLAZGO_TEXTO__
+      </p>
+    </div>
+
+    <div class="chart-card">
+      <h2>Ranking de margen promedio por modelo (los 11 países)</h2>
+      <div class="meta">Cada barra es un grupo de modelos de BuyPlan con el mismo coste y PVP — pasa el cursor para ver cuáles. Barefoot resaltado en un color distinto.</div>
+      <div class="chart-wrap"><canvas id="chartRankingModelos"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <h2>¿Cómo cambia el margen según el país?</h2>
+      <div class="field" style="max-width:320px; margin-bottom:14px;">
+        <label>Elige un país</label>
+        <select id="rankingPaisSelector"></select>
+      </div>
+      <div class="chart-wrap"><canvas id="chartRankingPais"></canvas></div>
+      <div class="coverage-note">__RANKING_NOTA_ESTIMADOS__</div>
+    </div>
+
+    <div class="chart-card">
+      <h2>La tabla completa — los 10 perfiles × 11 países</h2>
+      <div class="meta">Nombres de modelo de BuyPlan, sin agrupar por familia — para auditar exactamente qué modelo compone cada fila.</div>
+      <div style="overflow-x:auto;">
+        <table id="tablaRankingCompleta" style="min-width:1100px;">
+          <thead><tr id="theadRanking"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Dataset: Statista Market Insights, Euromonitor International, FashionUnited, Eurostat, FMI y BCE — fuente por fila en la pestaña "Explorar datos". Proyecto de portafolio con marca, modelos y cifras internas ficticios.
+</footer>
+
+<script>
+const DATA = __DATA_JSON__;
+const SCATTER_DATA = __SCATTER_JSON__;
+const POBLACION = __POBLACION_JSON__;
+const SEGMENT_COLOR = { "Nordicos": "#5B7FA6", "DACH": "#B8703F", "Benelux": "#5C7A52" };
+const RETURN_RATE_REAL = { "Alemania": 44.0, "Austria": 36.0, "Suiza": 45.0, "Suecia": 20.0, "Dinamarca": 30.0 };
+const EUR_USD = 1.1578; // BCE, 02/09/2026 — mismo tipo de cambio que el Excel/Python
+const charts = {};
+
+function convertirDesdeUSD(valorUSD, moneda){
+  if(valorUSD === null || valorUSD === undefined || isNaN(valorUSD)) return null;
+  return moneda === "USD" ? valorUSD : valorUSD / EUR_USD;
+}
+function convertirEntreMonedas(valor, monedaOrigen, monedaDestino){
+  if(valor === null || valor === undefined || isNaN(valor) || monedaOrigen === monedaDestino) return valor;
+  return monedaOrigen === "USD" ? valor / EUR_USD : valor * EUR_USD;
+}
+function fmtMoneda(v, moneda){
+  return v === null || v === undefined || isNaN(v) ? "—" : (moneda === "USD" ? "$" : "€") + Number(v).toLocaleString("es-ES",{maximumFractionDigits:0});
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+  };
+});
+
+function fila(pais, indicadorContiene){
+  return DATA.find(d => d.Pais === pais && d.Indicador && d.Indicador.toLowerCase().includes(indicadorContiene.toLowerCase()));
+}
+function fmtUSD(v){ return v === null || v === undefined || isNaN(v) ? "—" : "$" + Number(v).toLocaleString("es-ES",{maximumFractionDigits:0}); }
+function fmtPct(v){ return v === null || v === undefined || isNaN(v) ? "—" : v.toFixed(2) + "%"; }
+function descargarPNG(chartKey, nombre){
+  const c = charts[chartKey];
+  if(!c) return;
+  const a = document.createElement("a");
+  a.href = c.toBase64Image();
+  a.download = nombre + ".png";
+  a.click();
+}
+document.querySelectorAll(".btn-export[data-chart]").forEach(btn => {
+  btn.onclick = () => descargarPNG(btn.dataset.chart, btn.dataset.chart);
+});
+
+let monedaResumen = "EUR";
+
+function renderChartPib(){
+  const pib = DATA.filter(d => d.Indicador === "PIB per capita nominal")
+    .map(d => ({ ...d, valorConv: convertirDesdeUSD(d["Valor USD"], monedaResumen) }))
+    .sort((a,b)=>a.valorConv-b.valorConv);
+  if(charts.chartPib) charts.chartPib.destroy();
+  charts.chartPib = new Chart(document.getElementById("chartPib"), {
+    type: "bar",
+    data: { labels: pib.map(d=>d.Pais), datasets: [{ data: pib.map(d=>d.valorConv), backgroundColor: pib.map(d=>SEGMENT_COLOR[d.Segmento]), borderRadius:3 }] },
+    options: { indexAxis:"y", responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:c=>fmtMoneda(c.raw, monedaResumen)}}}, scales:{x:{ticks:{callback:v=>fmtMoneda(v, monedaResumen)}}} }
+  });
+  const top = pib[pib.length-1], bottom = pib[0];
+  document.getElementById("captionPib").textContent =
+    `${top.Pais} tiene el mayor poder de compra (${fmtMoneda(top.valorConv, monedaResumen)}); ${bottom.Pais} el menor (${fmtMoneda(bottom.valorConv, monedaResumen)}).`;
+}
+
+function renderChartScatter(){
+  const maxPib = Math.max(...SCATTER_DATA.map(d => DATA.find(x=>x.Pais===d.pais && x.Indicador==="PIB per capita nominal")["Valor USD"]));
+  const bubbleData = SCATTER_DATA.map(d => {
+    const pibRow = DATA.find(x=>x.Pais===d.pais && x.Indicador==="PIB per capita nominal");
+    const pibValUSD = pibRow ? pibRow["Valor USD"] : null;
+    return { x: convertirDesdeUSD(d.tamano_usd, monedaResumen), y: d.crecimiento_pct, r: 8 + (pibValUSD/maxPib)*26,
+             pais:d.pais, segmento:d.segmento, tamano_label:d.tamano_label, crecimiento_label:d.crecimiento_label,
+             pibConv: convertirDesdeUSD(pibValUSD, monedaResumen) };
+  });
+  if(charts.chartScatter) charts.chartScatter.destroy();
+  charts.chartScatter = new Chart(document.getElementById("chartScatter"), {
+    type: "bubble",
+    data: { datasets: [{ data: bubbleData, backgroundColor: bubbleData.map(d=>SEGMENT_COLOR[d.segmento]+"CC") }] },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: (c) => {
+          const d = c.raw;
+          return [d.pais, "Tamaño: " + fmtMoneda(d.x, monedaResumen) + " (" + d.tamano_label + ")", "Crecimiento: " + d.y + "% (" + d.crecimiento_label + ")", "PIB/cápita: " + fmtMoneda(d.pibConv, monedaResumen)];
+        } } } },
+      scales:{ x:{ title:{display:true, text:"Tamaño de mercado (" + monedaResumen + ", indicador más representativo por país)"}, ticks:{callback:v=>fmtMoneda(v, monedaResumen)} },
+               y:{ title:{display:true, text:"Crecimiento anual (%)"} } } }
+  });
+}
+
+function construirResumen(){
+  document.getElementById("btn-resumen-usd").onclick = () => {
+    monedaResumen = "USD";
+    document.getElementById("btn-resumen-usd").classList.add("active");
+    document.getElementById("btn-resumen-eur").classList.remove("active");
+    renderChartPib(); renderChartScatter();
+  };
+  document.getElementById("btn-resumen-eur").onclick = () => {
+    monedaResumen = "EUR";
+    document.getElementById("btn-resumen-eur").classList.add("active");
+    document.getElementById("btn-resumen-usd").classList.remove("active");
+    renderChartPib(); renderChartScatter();
+  };
+
+  renderChartPib();
+  renderChartScatter();
+
+  const lujo = DATA.filter(d => d.Indicador && d.Indicador.toLowerCase().includes("cuota de lujo") && d["Valor Porcentaje"] !== null)
+                    .sort((a,b)=>a["Valor Porcentaje"]-b["Valor Porcentaje"]);
+  charts.chartLujo = new Chart(document.getElementById("chartLujo"), {
+    type:"bar",
+    data:{ labels: lujo.map(d=>d.Pais), datasets:[{ data: lujo.map(d=>d["Valor Porcentaje"]), backgroundColor: lujo.map(d=>SEGMENT_COLOR[d.Segmento]), borderRadius:3 }]},
+    options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>fmtPct(c.raw)}}},
+      scales:{ x:{ ticks:{ callback:v=>v+"%" } } } }
+  });
+
+  const devol = DATA.filter(d => d.Indicador === "Tasa de devolucion eCommerce moda").sort((a,b)=>a["Valor Porcentaje"]-b["Valor Porcentaje"]);
+  charts.chartDevol = new Chart(document.getElementById("chartDevol"), {
+    type:"bar",
+    data:{ labels: devol.map(d=>d.Pais), datasets:[{ data: devol.map(d=>d["Valor Porcentaje"]), backgroundColor: devol.map(d=>SEGMENT_COLOR[d.Segmento]), borderRadius:3 }]},
+    options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>fmtPct(c.raw)}}},
+      scales:{ x:{ ticks:{ callback:v=>v+"%" } } } }
+  });
+}
+
+const PAISES_CON_TAM = ["Suecia","Dinamarca","Finlandia","Suiza"];
+let monedaSimulador = "EUR";
+let modoDevolucion = "fijo";
+let canalSimulador = "ecommerce";
+const BANDA_PP_DEVOLUCION = 4.0; // banda +/- alrededor del dato real, EDITABLE por el usuario, no es un dato de fuente
+let ultimaSimulacionMC = [];
+
+// Coste y PVP por categoría (ficticios), leídos del Excel de benchmark por build_dashboard.py — en EUR
+const PRODUCT_CATEGORIES = __PRODUCT_CATEGORIES_JSON__;
+const MULTIPLICADOR_WHOLESALE = __MULTIPLICADOR_WHOLESALE__; // coste x multiplicador = precio venta wholesale (supuesto ficticio, ver build_dashboard.py)
+const COMISION_DISENADORA_DEFAULT_EUR = 10; // por unidad, canal presencial (supuesto del caso, ficticio)
+// IVA estándar por país — BCE/fuentes fiscales oficiales, 2026. España/Alemania/Holanda confirmados
+// por el Excel del caso; el resto verificado con fuentes fiscales independientes.
+const IVA_POR_PAIS = {
+  "Suecia": 25, "Dinamarca": 25, "Noruega": 25, "Finlandia": 25.5,
+  "Alemania": 19, "Austria": 20, "Suiza": 8.1, "Holanda": 21,
+  "Belgica": 21, "Luxemburgo": 17
+};
+
+function convertirDesdeEUR(valorEUR, moneda){
+  if(valorEUR === null || valorEUR === undefined || isNaN(valorEUR)) return null;
+  return moneda === "EUR" ? valorEUR : valorEUR * EUR_USD;
+}
+
+function actualizarLabelsMonedaSimulador(){
+  ["labelMonedaPrecio","labelMonedaCoste","labelMonedaCosteDevol","labelMonedaComision"].forEach(id => {
+    document.getElementById(id).textContent = monedaSimulador;
+  });
+}
+
+function construirSimulador(){
+  const selCat = document.getElementById("simCategoria");
+  Object.keys(PRODUCT_CATEGORIES).forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat; opt.textContent = cat;
+    selCat.appendChild(opt);
+  });
+  selCat.onchange = () => { aplicarCategoria(); calcularSimulador(); };
+
+  const sel = document.getElementById("simPais");
+  Object.keys(POBLACION).forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p; opt.textContent = p + (PAISES_CON_TAM.includes(p) ? "" : "  (solo modo manual)");
+    sel.appendChild(opt);
+  });
+  sel.onchange = () => { actualizarModoDisponible(); actualizarDevolucionDefault(); actualizarRangoDevolucionDefault(); actualizarIvaDefault(); calcularSimulador(); };
+
+  document.querySelectorAll("#simCanalToggle button").forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll("#simCanalToggle button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      canalSimulador = b.dataset.canal;
+      document.getElementById("campoIva").style.display = canalSimulador === "ecommerce" ? "flex" : "none";
+      document.getElementById("campoComisionAgente").style.display = canalSimulador === "presencial" ? "flex" : "none";
+      document.getElementById("campoCosteTransporte").style.display = canalSimulador === "presencial" ? "flex" : "none";
+      document.getElementById("labelSimPrecio").innerHTML = canalSimulador === "ecommerce"
+        ? 'PVP al público, con IVA (<span id="labelMonedaPrecio">' + monedaSimulador + '</span>) <span id="badgePrecio" class="badge-input">tu dato</span>'
+        : 'Precio de venta wholesale (<span id="labelMonedaPrecio">' + monedaSimulador + '</span>) <span id="badgePrecio" class="badge-input">tu dato</span>';
+      aplicarCategoria();
+      calcularSimulador();
+    };
+  });
+
+  document.querySelectorAll("#simModoToggle button").forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll("#simModoToggle button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      const modo = b.dataset.modo;
+      document.getElementById("campoManual").style.display = modo === "manual" ? "flex" : "none";
+      document.getElementById("campoAuto").style.display = modo === "auto" ? "flex" : "none";
+      calcularSimulador();
+    };
+  });
+
+  document.querySelectorAll("#simDevolModoToggle button").forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll("#simDevolModoToggle button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      modoDevolucion = b.dataset.devolmodo;
+      document.getElementById("campoDevolFija").style.display = modoDevolucion === "fijo" ? "flex" : "none";
+      document.getElementById("campoDevolRango").style.display = modoDevolucion === "montecarlo" ? "flex" : "none";
+      document.getElementById("simDetOutputs").style.display = modoDevolucion === "fijo" ? "block" : "none";
+      document.getElementById("simMcOutputs").style.display = modoDevolucion === "montecarlo" ? "block" : "none";
+      document.getElementById("simMcChartCard").style.display = modoDevolucion === "montecarlo" ? "block" : "none";
+      if(modoDevolucion === "montecarlo") actualizarRangoDevolucionDefault();
+      calcularSimulador();
+    };
+  });
+
+  document.querySelectorAll("#simMonedaToggle button").forEach(b => {
+    b.onclick = () => {
+      const nuevaMoneda = b.dataset.moneda;
+      if(nuevaMoneda === monedaSimulador) return;
+      ["simPrecio","simCoste","simCosteDevolucion","simComision","simCosteTransporte"].forEach(id => {
+        const input = document.getElementById(id);
+        const valorActual = parseFloat(input.value) || 0;
+        input.value = Math.round(convertirEntreMonedas(valorActual, monedaSimulador, nuevaMoneda) * 100) / 100;
+      });
+      monedaSimulador = nuevaMoneda;
+      document.querySelectorAll("#simMonedaToggle button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      actualizarLabelsMonedaSimulador();
+      actualizarModoDisponible();
+      calcularSimulador();
+    };
+  });
+
+  document.getElementById("simCuotaObjetivo").oninput = (e) => {
+    document.getElementById("simCuotaObjetivoValor").textContent = Number(e.target.value).toFixed(3) + "%";
+    calcularSimulador();
+  };
+  ["simUnidadesManual","simPrecio","simCoste","simDevolucion","simCosteDevolucion","simDevolucionMin","simDevolucionMax","simIva","simComision"].forEach(id => {
+    document.getElementById(id).oninput = calcularSimulador;
+  });
+
+  actualizarLabelsMonedaSimulador();
+  actualizarModoDisponible();
+  actualizarDevolucionDefault();
+  actualizarRangoDevolucionDefault();
+  actualizarIvaDefault();
+  document.getElementById("btn-mc-csv").onclick = descargarCSVMonteCarlo;
+  calcularSimulador();
+}
+
+function aplicarCategoria(){
+  const cat = document.getElementById("simCategoria").value;
+  const badgePrecio = document.getElementById("badgePrecio");
+  const badgeCoste = document.getElementById("badgeCoste");
+  if(!cat || !PRODUCT_CATEGORIES[cat]){
+    badgePrecio.textContent = "tu dato"; badgePrecio.className = "badge-input";
+    badgeCoste.textContent = "tu dato"; badgeCoste.className = "badge-input";
+    return;
+  }
+  const { coste, pvp } = PRODUCT_CATEGORIES[cat];
+  const costeConv = convertirDesdeEUR(coste, monedaSimulador);
+  const precioBase = canalSimulador === "ecommerce" ? pvp : Math.round(coste * MULTIPLICADOR_WHOLESALE * 100) / 100;
+  const precioConv = convertirDesdeEUR(precioBase, monedaSimulador);
+  document.getElementById("simCoste").value = Math.round(costeConv * 100) / 100;
+  document.getElementById("simPrecio").value = Math.round(precioConv * 100) / 100;
+  badgePrecio.textContent = "dato del caso (ficticio)"; badgePrecio.className = "badge-fuente";
+  badgeCoste.textContent = "dato del caso (ficticio)"; badgeCoste.className = "badge-fuente";
+}
+
+function actualizarIvaDefault(){
+  const pais = document.getElementById("simPais").value;
+  const input = document.getElementById("simIva");
+  const badge = document.getElementById("badgeIva");
+  if(IVA_POR_PAIS[pais] !== undefined){
+    input.value = IVA_POR_PAIS[pais];
+    badge.textContent = "dato real";
+    badge.className = "badge-fuente";
+  } else {
+    badge.textContent = "sin dato real — tu supuesto";
+    badge.className = "badge-input";
+  }
+}
+
+function actualizarModoDisponible(){
+  const pais = document.getElementById("simPais").value;
+  const autoBtn = document.querySelector('#simModoToggle button[data-modo="auto"]');
+  const disponible = PAISES_CON_TAM.includes(pais);
+  autoBtn.disabled = !disponible;
+  if(!disponible && autoBtn.classList.contains("active")){
+    document.querySelector('#simModoToggle button[data-modo="manual"]').click();
+  }
+  const detalle = document.getElementById("simAutoDetalle");
+  if(disponible){
+    const apparelRow = fila(pais, "Ingreso per capita mercado Apparel");
+    const lujoRow = fila(pais, "Cuota de lujo en Apparel");
+    const apparelConv = convertirDesdeUSD(apparelRow["Valor USD"], monedaSimulador);
+    detalle.textContent = `Mercado accesible = ${fmtMoneda(apparelConv, monedaSimulador)}/persona × ${POBLACION[pais]}M hab. × ${lujoRow["Valor Porcentaje"]}% de cuota de lujo.`;
+  } else {
+    detalle.textContent = `${pais} no tiene en el dataset, a la vez, "Apparel per cápita" y "cuota de lujo" — usa modo manual.`;
+  }
+}
+
+function actualizarDevolucionDefault(){
+  const pais = document.getElementById("simPais").value;
+  const input = document.getElementById("simDevolucion");
+  const badge = document.getElementById("badgeDevolucion");
+  if(RETURN_RATE_REAL[pais] !== undefined){
+    input.value = RETURN_RATE_REAL[pais];
+    badge.textContent = "dato real (Statista)";
+    badge.className = "badge-fuente";
+  } else {
+    badge.textContent = "sin dato real — tu supuesto";
+    badge.className = "badge-input";
+  }
+}
+
+function actualizarRangoDevolucionDefault(){
+  const pais = document.getElementById("simPais").value;
+  const minInput = document.getElementById("simDevolucionMin");
+  const maxInput = document.getElementById("simDevolucionMax");
+  const badge = document.getElementById("badgeDevolucionRango");
+  const hint = document.getElementById("simDevolRangoHint");
+  if(RETURN_RATE_REAL[pais] !== undefined){
+    const base = RETURN_RATE_REAL[pais];
+    minInput.value = Math.max(0, base - BANDA_PP_DEVOLUCION).toFixed(1);
+    maxInput.value = Math.min(100, base + BANDA_PP_DEVOLUCION).toFixed(1);
+    badge.textContent = "banda alrededor del dato real (Statista)";
+    badge.className = "badge-fuente";
+    hint.textContent = `Banda de ±${BANDA_PP_DEVOLUCION}pp alrededor del ${base}% real de ${pais} — ajustable.`;
+  } else {
+    minInput.value = "";
+    maxInput.value = "";
+    badge.textContent = "sin dato real — tu supuesto";
+    badge.className = "badge-input";
+    hint.textContent = `${pais} no tiene tasa de devolución real en el dataset. Escribe tú un rango razonable.`;
+  }
+}
+
+function obtenerUnidadesEstimadas(pais, precio){
+  const modo = document.querySelector("#simModoToggle button.active").dataset.modo;
+  if(modo === "manual"){
+    return { unidades: parseFloat(document.getElementById("simUnidadesManual").value) || 0,
+             formula: "introducido manualmente" };
+  }
+  const apparelRow = fila(pais, "Ingreso per capita mercado Apparel");
+  const lujoRow = fila(pais, "Cuota de lujo en Apparel");
+  const cuotaObjetivo = parseFloat(document.getElementById("simCuotaObjetivo").value) / 100;
+  const poblacionAbs = POBLACION[pais] * 1000000;
+  const apparelConv = convertirDesdeUSD(apparelRow["Valor USD"], monedaSimulador);
+  const mercadoAccesible = apparelConv * poblacionAbs * (lujoRow["Valor Porcentaje"]/100);
+  const ingresoObjetivo = mercadoAccesible * cuotaObjetivo;
+  const unidades = precio > 0 ? ingresoObjetivo / precio : 0;
+  return { unidades, formula: "(gasto en lujo accesible × cuota objetivo) ÷ precio" };
+}
+
+function calcularDeduccionCanal(precio){
+  if(canalSimulador === "ecommerce"){
+    const iva = parseFloat(document.getElementById("simIva").value) || 0;
+    const deduccion = precio * (iva/100) / (1 + iva/100);
+    return { deduccion, precioNeto: precio - deduccion,
+             label: "IVA a remitir", formula: "ingreso bruto × IVA/(1+IVA)" };
+  }
+  return { deduccion: 0, precioNeto: precio,
+           label: "Sin deducción de canal", formula: "el precio wholesale ya se factura sin IVA" };
+}
+
+function calcularSimulador(){
+  const pais = document.getElementById("simPais").value;
+  const precio = parseFloat(document.getElementById("simPrecio").value) || 0;
+  const coste = parseFloat(document.getElementById("simCoste").value) || 0;
+  const costeDevol = parseFloat(document.getElementById("simCosteDevolucion").value) || 0;
+  const costeAdicional = parseFloat(document.getElementById("simComision").value) || 0;
+  const costeTotalUnitario = coste + costeAdicional;
+  const { unidades, formula: formulaUnidades } = obtenerUnidadesEstimadas(pais, precio);
+  const { deduccion, precioNeto, label: labelDeduccion, formula: formulaDeduccion } = calcularDeduccionCanal(precio);
+
+  document.getElementById("labelIngresoBruto").textContent = canalSimulador === "ecommerce" ? "Ingreso bruto (PVP con IVA)" : "Ingreso bruto (precio wholesale)";
+  document.getElementById("labelDeduccionCanal").textContent = labelDeduccion;
+  document.getElementById("formulaDeduccionCanal").textContent = formulaDeduccion;
+
+  if(modoDevolucion === "montecarlo"){
+    correrMonteCarlo(pais, precio, costeTotalUnitario, costeDevol, unidades, formulaUnidades, precioNeto);
+    return;
+  }
+
+  const devolPct = parseFloat(document.getElementById("simDevolucion").value) || 0;
+  const ingreso = unidades * precio;
+  const deduccionTotal = unidades * deduccion;
+  const ingresoNeto = ingreso - deduccionTotal;
+  const costeProd = unidades * costeTotalUnitario;
+  const margenBruto = ingresoNeto - costeProd;
+  const devoluciones = unidades * (devolPct/100);
+  const ingresoPerdido = devoluciones * precioNeto;
+  const costeDevolTotal = devoluciones * costeDevol;
+
+  // Solo canal Presencial/B2B: comision del agente de ventas + coste de transporte
+  // (promedio real, ver nota del campo) - se restan ademas de lo anterior.
+  let comisionAgenteTotal = 0, costeTransporteTotal = 0;
+  if(canalSimulador === "presencial"){
+    const comisionAgentePct = parseFloat(document.getElementById("simComisionAgente").value) || 0;
+    const costeTransporteUnit = parseFloat(document.getElementById("simCosteTransporte").value) || 0;
+    comisionAgenteTotal = ingresoNeto * (comisionAgentePct/100);
+    costeTransporteTotal = unidades * costeTransporteUnit;
+  }
+
+  const margenNeto = margenBruto - ingresoPerdido - costeDevolTotal - comisionAgenteTotal - costeTransporteTotal;
+  const margenPct = ingreso > 0 ? (margenNeto/ingreso)*100 : 0;
+
+  document.getElementById("f-unidades").textContent = formulaUnidades;
+  document.getElementById("o-unidades").textContent = Math.round(unidades).toLocaleString("es-ES");
+  document.getElementById("o-ingreso").textContent = fmtMoneda(ingreso, monedaSimulador);
+  document.getElementById("o-deduccioncanal").textContent = fmtMoneda(deduccionTotal, monedaSimulador);
+  document.getElementById("o-ingresoneto").textContent = fmtMoneda(ingresoNeto, monedaSimulador);
+  document.getElementById("o-costeprod").textContent = fmtMoneda(costeProd, monedaSimulador);
+  document.getElementById("o-margenbruto").textContent = fmtMoneda(margenBruto, monedaSimulador);
+  document.getElementById("o-devoluciones").textContent = Math.round(devoluciones).toLocaleString("es-ES");
+  document.getElementById("o-ingresoperdido").textContent = fmtMoneda(ingresoPerdido, monedaSimulador);
+  document.getElementById("o-costedevol").textContent = fmtMoneda(costeDevolTotal, monedaSimulador);
+  document.getElementById("rowComisionAgente").style.display = canalSimulador === "presencial" ? "flex" : "none";
+  document.getElementById("rowCosteTransporte").style.display = canalSimulador === "presencial" ? "flex" : "none";
+  document.getElementById("o-comisionagente").textContent = fmtMoneda(comisionAgenteTotal, monedaSimulador);
+  document.getElementById("o-costetransporte").textContent = fmtMoneda(costeTransporteTotal, monedaSimulador);
+  document.getElementById("f-margenneto").textContent = canalSimulador === "presencial"
+    ? "margen bruto − ingreso perdido − coste logístico − comisión agente − coste transporte"
+    : "margen bruto − ingreso perdido − coste logístico";
+  document.getElementById("o-margenneto").textContent = fmtMoneda(margenNeto, monedaSimulador);
+  document.getElementById("o-margenpct").textContent = margenPct.toFixed(1) + "%";
+}
+
+function correrMonteCarlo(pais, precio, coste, costeDevol, unidades, formulaUnidades, precioNeto){
+  const N = 10000;
+  const tasaMin = parseFloat(document.getElementById("simDevolucionMin").value);
+  const tasaMax = parseFloat(document.getElementById("simDevolucionMax").value);
+
+  if(isNaN(tasaMin) || isNaN(tasaMax) || tasaMin > tasaMax){
+    document.getElementById("mc-media").textContent = "—";
+    document.getElementById("mc-n-simulaciones").textContent = "escribe un rango mín./máx. válido arriba";
+    if(charts.chartMonteCarlo){ charts.chartMonteCarlo.destroy(); delete charts.chartMonteCarlo; }
+    return;
+  }
+
+  const resultados = new Array(N);
+  for(let i = 0; i < N; i++){
+    const tasa = (tasaMin + Math.random() * (tasaMax - tasaMin)) / 100;
+    const margenNetoUnidad = precioNeto * (1 - tasa) - coste - tasa * costeDevol;
+    resultados[i] = { iteracion: i + 1, tasa_devolucion_pct: tasa * 100, margen_neto_unidad: margenNetoUnidad,
+                       margen_pct: precioNeto > 0 ? (margenNetoUnidad / precioNeto) * 100 : 0 };
+  }
+  ultimaSimulacionMC = resultados;
+
+  const margenes = resultados.map(r => r.margen_neto_unidad).sort((a,b) => a-b);
+  const media = margenes.reduce((a,b) => a+b, 0) / N;
+  const varianza = margenes.reduce((a,b) => a + (b-media)**2, 0) / N;
+  const std = Math.sqrt(varianza);
+  const p10 = margenes[Math.floor(N*0.10)];
+  const p90 = margenes[Math.floor(N*0.90)];
+
+  document.getElementById("f-unidades").textContent = formulaUnidades;
+  document.getElementById("o-unidades").textContent = Math.round(unidades).toLocaleString("es-ES");
+  document.getElementById("mc-n-simulaciones").textContent = `promedio de ${N.toLocaleString("es-ES")} simulaciones`;
+  document.getElementById("mc-media").textContent = fmtMoneda(media, monedaSimulador);
+  document.getElementById("mc-p10").textContent = fmtMoneda(p10, monedaSimulador);
+  document.getElementById("mc-p90").textContent = fmtMoneda(p90, monedaSimulador);
+  document.getElementById("mc-std").textContent = fmtMoneda(std, monedaSimulador);
+  document.getElementById("mc-total").textContent = fmtMoneda(media * unidades, monedaSimulador);
+
+  renderHistogramaMonteCarlo(margenes);
+}
+
+function renderHistogramaMonteCarlo(margenesOrdenados){
+  const nBins = 24;
+  const min = margenesOrdenados[0], max = margenesOrdenados[margenesOrdenados.length-1];
+  const ancho = (max - min) / nBins || 1;
+  const bins = new Array(nBins).fill(0);
+  margenesOrdenados.forEach(v => {
+    let idx = Math.floor((v - min) / ancho);
+    if(idx >= nBins) idx = nBins - 1;
+    if(idx < 0) idx = 0;
+    bins[idx]++;
+  });
+  const etiquetas = bins.map((_, i) => fmtMoneda(min + i*ancho, monedaSimulador));
+
+  if(charts.chartMonteCarlo) charts.chartMonteCarlo.destroy();
+  charts.chartMonteCarlo = new Chart(document.getElementById("chartMonteCarlo"), {
+    type: "bar",
+    data: { labels: etiquetas, datasets: [{ data: bins, backgroundColor: "#A8724A", borderRadius: 2 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { title: (items) => "Margen ≈ " + items[0].label, label: (c) => c.raw + " de 10.000 simulaciones" } } },
+      scales: { x: { ticks: { maxTicksLimit: 8 }, title: { display: true, text: "Margen neto por unidad" } },
+                y: { title: { display: true, text: "Nº de simulaciones" } } }
+    }
+  });
+}
+
+function descargarCSVMonteCarlo(){
+  if(!ultimaSimulacionMC.length) return;
+  const pais = document.getElementById("simPais").value;
+  const header = ["iteracion","pais","tasa_devolucion_pct","margen_neto_unidad","margen_pct"];
+  const rows = ultimaSimulacionMC.map(r =>
+    [r.iteracion, pais, r.tasa_devolucion_pct.toFixed(4), r.margen_neto_unidad.toFixed(4), r.margen_pct.toFixed(4)].join(","));
+  const csv = [header.join(","), ...rows].join("\n");
+  const blob = new Blob(["\ufeff"+csv], {type:"text/csv;charset=utf-8;"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "lumbra_montecarlo_" + pais.replace(/[^a-z0-9]+/gi,"_") + ".csv";
+  a.click();
+}
+
+let segmentoActivo = "Todos", monedaActiva = "EUR";
+
+function indicadoresUnicos(){
+  const seen = new Map();
+  DATA.forEach(d => { if(!seen.has(d.Indicador)) seen.set(d.Indicador, d.Tipo); });
+  return Array.from(seen.entries());
+}
+function construirExplorar(){
+  const segmentos = ["Todos", "Nordicos", "DACH", "Benelux"];
+  const cont = document.getElementById("pills-segmento");
+  segmentos.forEach(seg => {
+    const b = document.createElement("button");
+    b.className = "pill" + (seg === "Todos" ? " active" : "");
+    b.textContent = seg;
+    b.onclick = () => { segmentoActivo = seg; document.querySelectorAll("#pills-segmento .pill").forEach(p=>p.classList.remove("active")); b.classList.add("active"); renderExplorar(); };
+    cont.appendChild(b);
+  });
+  const sel = document.getElementById("select-indicador");
+  indicadoresUnicos().forEach(([ind, tipo]) => {
+    const opt = document.createElement("option");
+    opt.value = ind; opt.textContent = ind + (tipo === "Porcentaje" ? "  (%)" : "");
+    sel.appendChild(opt);
+  });
+  sel.value = "PIB per capita nominal";
+  sel.onchange = renderExplorar;
+  document.getElementById("btn-usd").onclick = () => { monedaActiva="USD"; document.getElementById("btn-usd").classList.add("active"); document.getElementById("btn-eur").classList.remove("active"); renderExplorar(); };
+  document.getElementById("btn-eur").onclick = () => { monedaActiva="EUR"; document.getElementById("btn-eur").classList.add("active"); document.getElementById("btn-usd").classList.remove("active"); renderExplorar(); };
+  document.getElementById("btn-csv").onclick = descargarCSV;
+  renderExplorar();
+}
+
+let filasActuales = [];
+function renderExplorar(){
+  const indicador = document.getElementById("select-indicador").value;
+  const filas = DATA.filter(d => d.Indicador === indicador && (segmentoActivo === "Todos" || d.Segmento === segmentoActivo));
+  const tipo = filas.length ? filas[0].Tipo : "Monetario";
+  const esMonetario = tipo === "Monetario";
+  document.getElementById("btn-usd").disabled = !esMonetario;
+  document.getElementById("btn-eur").disabled = !esMonetario;
+  const campo = esMonetario ? (monedaActiva === "USD" ? "Valor USD" : "Valor EUR") : "Valor Porcentaje";
+  filasActuales = [...filas].sort((a,b) => (b[campo] ?? -Infinity) - (a[campo] ?? -Infinity));
+
+  document.getElementById("chart-title").textContent = indicador;
+  document.getElementById("chart-meta").textContent = esMonetario ? `Valores en ${monedaActiva} · segmento: ${segmentoActivo}` : `Valores en % · segmento: ${segmentoActivo}`;
+
+  if(charts.chartExplorar) charts.chartExplorar.destroy();
+  charts.chartExplorar = new Chart(document.getElementById("chartExplorar"), {
+    type:"bar",
+    data:{ labels: filasActuales.map(f=>f.Pais), datasets:[{ data: filasActuales.map(f=>f[campo]), backgroundColor: filasActuales.map(f=>SEGMENT_COLOR[f.Segmento]||"#999"), borderRadius:3 }]},
+    options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ x:{ ticks:{ callback:v=> esMonetario ? (monedaActiva==="USD"?"$":"€")+v.toLocaleString() : v+"%" } } } }
+  });
+
+  const tbody = document.getElementById("tabla-body");
+  tbody.innerHTML = "";
+  filasActuales.forEach(f => {
+    const val = esMonetario ? fmtUSDorEUR(f[campo]) : fmtPct(f[campo]);
+    const fuenteHtml = f.URL ? `<a href="${f.URL}" target="_blank" rel="noopener">${f.Fuente}</a>` : f.Fuente;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${f.Pais}</td><td>${val}</td><td>${f.Anio ?? "—"}</td><td>${fuenteHtml}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function fmtUSDorEUR(v){
+  if(v === null || v === undefined) return "—";
+  return (monedaActiva === "USD" ? "$" : "€") + Number(v).toLocaleString("es-ES",{maximumFractionDigits:2});
+}
+function descargarCSV(){
+  const indicador = document.getElementById("select-indicador").value;
+  const header = ["Pais","Valor","Anio","Fuente","URL"];
+  const rows = filasActuales.map(f => {
+    const campo = f.Tipo === "Monetario" ? (monedaActiva === "USD" ? "Valor USD" : "Valor EUR") : "Valor Porcentaje";
+    return [f.Pais, f[campo], f.Anio, `"${(f.Fuente||"").replace(/"/g,'""')}"`, f.URL || ""].join(",");
+  });
+  const csv = [header.join(","), ...rows].join("\n");
+  const blob = new Blob(["\ufeff"+csv], {type:"text/csv;charset=utf-8;"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "lumbra_" + indicador.replace(/[^a-z0-9]+/gi,"_") + ".csv";
+  a.click();
+}
+
+const BENCHMARK_ROWS = __BENCHMARK_JSON__;
+const PROSPECCION_RESUMEN = __PROSPECCION_JSON__;
+const CIUDADES_ESTUDIO = __CIUDADES_JSON__;
+const PAISES_ESTUDIO = __PAISES_JSON__;
+const CIUDAD_A_PAIS = __CIUDAD_A_PAIS_JSON__;
+
+function construirCompetencia(){
+  const sel = document.getElementById("compCategoria");
+  PROSPECCION_RESUMEN.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.categoria; opt.textContent = p.categoria;
+    sel.appendChild(opt);
+  });
+  sel.onchange = renderCompetencia;
+
+  const selPais = document.getElementById("compPais");
+  const optTodosPaises = document.createElement("option");
+  optTodosPaises.value = ""; optTodosPaises.textContent = "Todos los países";
+  selPais.appendChild(optTodosPaises);
+  PAISES_ESTUDIO.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p; opt.textContent = p;
+    selPais.appendChild(opt);
+  });
+  selPais.onchange = renderCompetencia;
+
+  const selCiudad = document.getElementById("compCiudad");
+  const optTodas = document.createElement("option");
+  optTodas.value = ""; optTodas.textContent = "Todas las ciudades";
+  selCiudad.appendChild(optTodas);
+  CIUDADES_ESTUDIO.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c; opt.textContent = c + " (" + (CIUDAD_A_PAIS[c] || "?") + ")";
+    selCiudad.appendChild(opt);
+  });
+  selCiudad.onchange = renderCompetencia;
+
+  document.getElementById("btn-comp-csv").onclick = descargarCSVCompetencia;
+  renderCompetencia();
+}
+
+let filasCompActuales = [];
+function fmt2eur(v){ return v === null || v === undefined || isNaN(v) ? "—" : "€" + Number(v).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmt2pct(v){ return v === null || v === undefined || isNaN(v) ? "—" : (v>=0?"+":"") + (v*100).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}) + "%"; }
+function limpiarModelo(m){ return (m || "").replace(/\s*\([^)]*\)\s*/g, "").trim(); }
+
+function renderCompetencia(){
+  const categoria = document.getElementById("compCategoria").value;
+  const pais = document.getElementById("compPais").value;
+  const ciudad = document.getElementById("compCiudad").value;
+  const resumenOriginal = PROSPECCION_RESUMEN.find(p => p.categoria === categoria);
+  let filas = BENCHMARK_ROWS.filter(r => r.categoria === categoria);
+  const totalCompetidoresCategoria = filas.filter(f => f.tipo !== "LUMBRA").length;
+
+  const hint = document.getElementById("compFiltroHint");
+  filas.forEach(f => { delete f._motivoFiltro; });
+  if(pais){
+    filas = filas.filter(f => f.tipo === "LUMBRA" || f.paises_venta.includes(pais));
+  }
+  if(ciudad){
+    const paisDeEstaCiudad = CIUDAD_A_PAIS[ciudad];
+    // No se descarta a quien solo vende online en el pais de esta ciudad - se
+    // muestra igual, pero marcado como "solo online", no "tienda aqui".
+    filas = filas.filter(f => f.tipo === "LUMBRA"
+      || f.ciudades.includes(ciudad)
+      || (paisDeEstaCiudad && f.paises_online.includes(paisDeEstaCiudad)));
+    filas.forEach(f => {
+      if(f.tipo === "LUMBRA") return;
+      f._motivoFiltro = f.ciudades.includes(ciudad)
+        ? "Tienda física en " + ciudad
+        : "Solo venta online en " + paisDeEstaCiudad + " (sin tienda confirmada en " + ciudad + ")";
+    });
+  }
+  if(pais || ciudad){
+    const competidoresEncontrados = filas.filter(f => f.tipo !== "LUMBRA").length;
+    const conTiendaAqui = ciudad ? filas.filter(f => f.tipo !== "LUMBRA" && f.ciudades.includes(ciudad)).length : competidoresEncontrados;
+    const soloOnline = competidoresEncontrados - conTiendaAqui;
+    const donde = [pais, ciudad].filter(Boolean).join(" · ");
+    hint.style.display = "block";
+    if(competidoresEncontrados === 0){
+      hint.textContent = `No encontramos venta confirmada (online ni física) de ningún competidor en ${donde} para esta categoría — no significa que no vendan ahí, solo que no lo pudimos verificar.`;
+    } else if(ciudad && soloOnline > 0){
+      hint.textContent = `${conTiendaAqui} competidor(es) con tienda física en ${ciudad}, y ${soloOnline} más con venta online confirmada en ${CIUDAD_A_PAIS[ciudad]} aunque sin tienda ahí (de ${totalCompetidoresCategoria} en esta categoría).`;
+    } else {
+      hint.textContent = `Mostrando solo competidores con venta confirmada en ${donde} (${competidoresEncontrados} de ${totalCompetidoresCategoria} en esta categoría). Puede haber más marcas vendiendo ahí que no alcanzamos a verificar.`;
+    }
+  } else {
+    hint.style.display = "none";
+  }
+
+  filas = filas.slice().sort((a,b) => a.pvp_zona_euro - b.pvp_zona_euro);
+  filasCompActuales = filas;
+
+  const filtroActivo = pais || ciudad;
+  document.getElementById("compChartTitle").textContent = "LUMBRA vs. competencia — " + categoria + (filtroActivo ? " · " + [pais,ciudad].filter(Boolean).join(" · ") : "");
+  document.getElementById("compResumenCategoria").textContent = categoria;
+
+  // Cuando hay filtro de pais/ciudad, Minimo/Media/Maximo se recalculan en vivo
+  // sobre solo los competidores visibles - son numeros, se pueden recalcular sin
+  // inventar nada. Posicion y Lectura NO se recalculan (son texto redactado sobre
+  // todo el mercado europeo) - se muestran igual, marcadas como referencia.
+  const competidoresVisibles = filas.filter(f => f.tipo !== "LUMBRA");
+  const precios = competidoresVisibles.map(f => f.pvp_zona_euro);
+  const minimo = filtroActivo ? (precios.length ? Math.min(...precios) : null) : resumenOriginal.minimo;
+  const media = filtroActivo ? (precios.length ? precios.reduce((a,b)=>a+b,0)/precios.length : null) : resumenOriginal.media;
+  const maximo = filtroActivo ? (precios.length ? Math.max(...precios) : null) : resumenOriginal.maximo;
+  const deltaMediaEur = (media !== null && media !== undefined) ? resumenOriginal.pvp_lumbra - media : null;
+  const deltaMediaPct = (deltaMediaEur !== null && media) ? deltaMediaEur / media : null;
+
+  const filasResumen = [
+    ["PVP LUMBRA (vigente)", fmt2eur(resumenOriginal.pvp_lumbra)],
+    [filtroActivo ? "Comparables en este filtro" : "Comparables reales", filtroActivo ? competidoresVisibles.length : resumenOriginal.n_comparables],
+    ["Mínimo" + (filtroActivo ? " (en este filtro)" : " de mercado"), fmt2eur(minimo)],
+    ["Media" + (filtroActivo ? " (en este filtro)" : " de mercado"), fmt2eur(media)],
+    ["Máximo" + (filtroActivo ? " (en este filtro)" : " de mercado"), fmt2eur(maximo)],
+    ["Diferencia vs. media", fmt2eur(deltaMediaEur) + " (" + fmt2pct(deltaMediaPct) + ")"],
+    ["Posición — referencia de todo el mercado europeo (Excel, precio planner)", resumenOriginal.posicion],
+    ["Factibilidad", resumenOriginal.factibilidad],
+  ];
+  const rBody = document.getElementById("compResumenBody");
+  rBody.innerHTML = "";
+  filasResumen.forEach(([label, valor]) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${label}</td><td><strong>${valor}</strong></td>`;
+    rBody.appendChild(tr);
+  });
+
+  document.getElementById("compLectura").textContent = resumenOriginal.lectura
+    + (filtroActivo ? " (Nota: este texto describe todo el mercado europeo de la categoría, no solo el filtro activo.)" : "");
+
+  const wrap = document.getElementById("compChartWrap");
+  wrap.style.height = Math.max(300, filas.length * 34) + "px";
+  if(charts.chartCompetencia) charts.chartCompetencia.destroy();
+  charts.chartCompetencia = new Chart(document.getElementById("chartCompetencia"), {
+    type: "bar",
+    data: {
+      labels: filas.map(f => f.tipo === "LUMBRA" ? "LUMBRA" : (f.marca + " · " + limpiarModelo(f.modelo))),
+      datasets: [{ data: filas.map(f => f.pvp_zona_euro),
+        backgroundColor: filas.map(f => f.tipo === "LUMBRA" ? "#A8724A" : (f._motivoFiltro && f._motivoFiltro.startsWith("Solo venta online") ? "#C7D4E0" : "#8FA8C4")), borderRadius:3 }]
+    },
+    options: { indexAxis:"y", responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false},
+      tooltip:{ callbacks:{ label: (c) => {
+        const f = filas[c.dataIndex];
+        const base = ["País de la marca: " + f.pais_marca, "PVP: " + fmt2eur(f.pvp_zona_euro)];
+        if(f.tipo !== "LUMBRA") base.push("vs. LUMBRA: " + fmt2eur(f.delta_eur) + " (" + fmt2pct(f.delta_pct) + ")");
+        if(f.tipo !== "LUMBRA"){
+          base.push("Online: " + f.estado_online + (f.estado_online === "Confirmada" ? ` (${f.paises_online.length}/10)` : ""));
+          base.push("Físico: " + f.estado_fisico + (f.ciudades.length ? ` (${f.ciudades.join(", ")})` : ""));
+        }
+        if(f.cuota_mercado) base.push("Cuota de mercado: " + f.cuota_mercado);
+        if(f._motivoFiltro) base.push(f._motivoFiltro);
+        return base;
+      } } } },
+      scales:{ x:{ title:{display:true, text:"PVP con IVA, zona euro (€)"}, ticks:{ callback:v=>"€"+v } } }
+    }
+  });
+
+  const tbody = document.getElementById("compTablaBody");
+  tbody.innerHTML = "";
+  filas.forEach(f => {
+    const tr = document.createElement("tr");
+    const fuenteHtml = (f.fuente_url && f.fuente_url.startsWith("http"))
+      ? `<a href="${f.fuente_url}" target="_blank" rel="noopener">Ver fuente</a>` : (f.fuente_url || "—");
+    const deltaEur = f.tipo === "LUMBRA" ? "—" : fmt2eur(f.delta_eur);
+    const deltaPct = f.tipo === "LUMBRA" ? "—" : fmt2pct(f.delta_pct);
+    const cuotaTexto = f.cuota_mercado ? f.cuota_mercado + (f.cuota_mercado_fuente ? ` (${f.cuota_mercado_fuente})` : "") : "—";
+    const onlineTexto = f.tipo === "LUMBRA" ? "—" : (f.estado_online === "Confirmada"
+      ? `Confirmada (${f.paises_online.length}/10 — ${f.online_fuente})`
+      : f.estado_online);
+    const fisicoTexto = f.tipo === "LUMBRA" ? "—" : (f.estado_fisico === "Confirmada"
+      ? `Confirmada (${f.ciudades.join(", ")})`
+      : f.estado_fisico);
+    const motivoTd = f._motivoFiltro ? `<div class="hint" style="margin-top:2px;">${f._motivoFiltro}</div>` : "";
+    tr.innerHTML = `<td>${f.tipo}</td><td>${f.marca}</td><td>${f.pais_marca}</td><td>${limpiarModelo(f.modelo)}</td><td>${fmt2eur(f.pvp_zona_euro)}</td><td>${deltaEur}</td><td>${deltaPct}</td><td>${f.factibilidad}</td><td>${onlineTexto}</td><td>${fisicoTexto}${motivoTd}</td><td>${cuotaTexto}</td><td>${fuenteHtml}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function descargarCSVCompetencia(){
+  const categoria = document.getElementById("compCategoria").value;
+  const header = ["Tipo","Marca","Pais","Modelo","PVP_EUR","Delta_EUR","Delta_Pct","Factibilidad","Canal_online_estado","Canal_online_paises","Canal_online_fuente","Canal_fisico_estado","Canal_fisico_ciudades","Cuota_mercado","Fuente"];
+  const rows = filasCompActuales.map(f => [f.tipo, f.marca, f.pais_marca, `"${limpiarModelo(f.modelo).replace(/"/g,'""')}"`, f.pvp_zona_euro, f.delta_eur ?? "", f.delta_pct ?? "", f.factibilidad, f.estado_online, f.paises_online.length, `"${(f.online_fuente||"").replace(/"/g,'""')}"`, f.estado_fisico, `"${f.ciudades.join("; ")}"`, `"${(f.cuota_mercado||"").replace(/"/g,'""')}"`, `"${(f.fuente_url||"").replace(/"/g,'""')}"`].join(","));
+  const csv = [header.join(","), ...rows].join("\n");
+  const blob = new Blob(["\ufeff"+csv], {type:"text/csv;charset=utf-8;"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "lumbra_competencia_" + categoria.replace(/[^a-z0-9]+/gi,"_") + ".csv";
+  a.click();
+}
+
+const CATEGORIA_DOMINANTE_POR_PAIS = __CATEGORIA_DOMINANTE_JSON__;
+const TENDENCIA_BOTAS_ALTAS = __TENDENCIA_BOTAS_JSON__;
+
+function construirTendencias(){
+  const tbody = document.getElementById("tendTablaBody");
+  tbody.innerHTML = "";
+  CATEGORIA_DOMINANTE_POR_PAIS.forEach(f => {
+    const tr = document.createElement("tr");
+    const catHtml = f.excepcion ? `<strong>${f.categoria}</strong>` : f.categoria;
+    const cifraHtml = f.cifra || "—";
+    const marcasHtml = f.marcas_notables
+      ? `${f.marcas_notables}<div class="hint" style="margin-top:2px;">${f.marcas_fuente}</div>`
+      : "—";
+    tr.innerHTML = `<td><span style="display:inline-flex;vertical-align:middle;margin-right:6px;border:1px solid #DCD3C2;line-height:0;">${f.bandera_svg}</span>${f.pais}</td><td>${catHtml}</td><td>${cifraHtml}</td><td>${marcasHtml}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById("tendTituloTrend").textContent = TENDENCIA_BOTAS_ALTAS.titulo;
+  document.getElementById("tendTextoTrend").textContent = TENDENCIA_BOTAS_ALTAS.texto;
+  document.getElementById("tendRecomendacion").textContent = TENDENCIA_BOTAS_ALTAS.recomendacion;
+}
+
+const ESPANA_B2C = __ESPANA_B2C_JSON__;
+const ESPANA_CANAL_B2B = __ESPANA_CANAL_B2B_JSON__;
+const EXPORT_RANKING_PAISES = __EXPORT_RANKING_JSON__;
+const ESPANA_MARGENES_EXPORT = __ESPANA_MARGENES_EXPORT_JSON__;
+const ESPANA_MARGEN_CANAL = __ESPANA_MARGEN_CANAL_JSON__;
+
+// (la función fmtMoneda real, con soporte EUR/USD, vive arriba en la línea ~549 — aquí hubo
+// una duplicada que sobrescribía esa y rompía el cambio de moneda en Resumen/Simulador; se quitó)
+
+function construirEspana(){
+  const kpiDiv = document.getElementById("espanaKpis");
+  const b2c = ESPANA_B2C;
+  const kpis = [
+    { q: "¿Qué tan grande es el mercado de moda online en España?", v: "€" + Math.round(b2c.fashion_ecommerce.valor / EUR_USD).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "M", f: `Fashion eCommerce ${b2c.fashion_ecommerce.anio}, CAGR ${b2c.fashion_ecommerce.cagr}% — ${b2c.fashion_ecommerce.fuente} (original: $${b2c.fashion_ecommerce.valor}M)` },
+    { q: "¿Cuánto más se devuelve comprando online que en tienda?", v: (b2c.devolucion_online.valor / b2c.devolucion_fisica.valor).toFixed(1) + "x", f: `${b2c.devolucion_online.valor}% online vs ${b2c.devolucion_fisica.valor}% física — ${b2c.devolucion_online.fuente}` },
+    { q: "¿Qué parte de lo que se devuelve en España es calzado?", v: b2c.calzado_pct_valor_devuelto.valor + "%", f: `del valor total devuelto — ${b2c.calzado_pct_valor_devuelto.fuente}` },
+    { q: "¿Qué parte del mercado de moda sigue pasando por el canal mayorista tradicional?", v: "7%", f: "≈777M€ del mercado total (11.107M€), y cayendo — Acotex 2025" },
+  ];
+  kpiDiv.innerHTML = kpis.map(k => `<div class="kpi-card"><div class="kpi-q">${k.q}</div><div class="kpi-v">${k.v}</div><div class="kpi-f">${k.f}</div></div>`).join("");
+
+  if(charts.chartEspanaCanal) charts.chartEspanaCanal.destroy();
+  charts.chartEspanaCanal = new Chart(document.getElementById("chartEspanaCanal"), {
+    type: "bar",
+    data: { labels: ESPANA_CANAL_B2B.map(c => c.canal), datasets: [{ label: "% del mercado", data: ESPANA_CANAL_B2B.map(c => c.pct), backgroundColor: "#A8724A" }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{ callback:v=>v+"%" } }, x:{ ticks:{ font:{size:10} } } } },
+  });
+
+  if(charts.chartExportRanking) charts.chartExportRanking.destroy();
+  charts.chartExportRanking = new Chart(document.getElementById("chartExportRanking"), {
+    type: "bar",
+    data: { labels: EXPORT_RANKING_PAISES.map(p => `${p.posicion}º ${p.pais}`),
+      datasets: [{ label: "Crecimiento en valor 2024 (%)", data: EXPORT_RANKING_PAISES.map(p => p.crecimiento_2024_pct),
+        backgroundColor: EXPORT_RANKING_PAISES.map(p => p.crecimiento_2024_pct >= 0 ? "#5C7A52" : "#B8703F") }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{ callback:v=>v+"%" } } } },
+  });
+  const alemania = EXPORT_RANKING_PAISES.find(p => p.pais === "Alemania");
+  document.getElementById("espanaExportNota").textContent =
+    `Alemania es el 3er país que más compra calzado español, y el que mejor paga: ${alemania.precio_historico_2018}€/par de media (2018, única comparación directa disponible) — más que Italia (${EXPORT_RANKING_PAISES[0].precio_historico_2018}€) y Francia (${EXPORT_RANKING_PAISES[1].precio_historico_2018}€). El informe IVACE confirma el patrón en 2019: el calzado de origen UE se vende en Alemania a 29€/par vs 11€/par de terceros países.`;
+
+  if(charts.chartMargenExport) charts.chartMargenExport.destroy();
+  const cats = ESPANA_MARGENES_EXPORT["Alemania"].filas.map(f => f.categoria);
+  const coloresPais = { "Alemania": "#B8703F", "Francia": "#5B7FA6", "Italia": "#5C7A52" };
+  charts.chartMargenExport = new Chart(document.getElementById("chartMargenExport"), {
+    type: "bar",
+    data: { labels: cats, datasets: Object.keys(ESPANA_MARGENES_EXPORT).map(pais => ({
+        label: pais,
+        data: ESPANA_MARGENES_EXPORT[pais].filas.map(f => (f.pct_margen*100).toFixed(1)),
+        backgroundColor: coloresPais[pais],
+      })) },
+    options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ title:{display:true,text:"% margen neto"}, ticks:{ callback:v=>v+"%" } }, x:{ ticks:{ font:{size:10} } } } },
+  });
+
+  if(charts.chartCompetenciaEspana) charts.chartCompetenciaEspana.destroy();
+  charts.chartCompetenciaEspana = new Chart(document.getElementById("chartCompetenciaEspana"), {
+    type: "bar",
+    data: { labels: ["LUMBRA (Barefoot)", "Pikolinos (Betera)", "Hispanitas (Transitional Barefoot)"],
+      datasets: [{ label: "PVP (€)", data: [PRODUCT_CATEGORIES["Barefoot"].pvp, 119.95, 119.90],
+        backgroundColor: ["#A8724A", "#9C7A3C", "#5C7A52"] }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ title:{display:true,text:"€"} } } },
+  });
+
+  if(charts.chartMargenEspanaCanal) charts.chartMargenEspanaCanal.destroy();
+  charts.chartMargenEspanaCanal = new Chart(document.getElementById("chartMargenEspanaCanal"), {
+    type: "bar",
+    data: { labels: ESPANA_MARGEN_CANAL.map(f => f.categoria), datasets: [
+        { label: "Online", data: ESPANA_MARGEN_CANAL.map(f => (f.pct_margen_online*100).toFixed(1)), backgroundColor: "#9C7A3C" },
+        { label: "Presencial/B2B", data: ESPANA_MARGEN_CANAL.map(f => (f.pct_margen_presencial*100).toFixed(1)), backgroundColor: "#5C7A52" },
+      ] },
+    options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ title:{display:true,text:"% margen neto"}, ticks:{ callback:v=>v+"%" } }, x:{ ticks:{ font:{size:10} } } } },
+  });
+}
+
+const MATRIZ_MARGEN_MODELOS = __MATRIZ_MARGEN_MODELOS_JSON__;
+const PAISES_11_LISTA = __PAISES_11_LISTA_JSON__;
+
+function construirRanking(){
+  const esBarefoot = f => f.familia.includes("Barefoot");
+  if(charts.chartRankingModelos) charts.chartRankingModelos.destroy();
+  charts.chartRankingModelos = new Chart(document.getElementById("chartRankingModelos"), {
+    type: "bar",
+    data: { labels: MATRIZ_MARGEN_MODELOS.map(f => f.nombre_display),
+      datasets: [{ label: "% margen promedio (11 países)", data: MATRIZ_MARGEN_MODELOS.map(f => f.promedio_11_paises),
+        backgroundColor: MATRIZ_MARGEN_MODELOS.map(f => esBarefoot(f) ? "#B8703F" : "#5C7A52") }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ afterLabel: ctx => "Modelos: " + MATRIZ_MARGEN_MODELOS[ctx.dataIndex].modelos +
+          "\nRango por país: " + MATRIZ_MARGEN_MODELOS[ctx.dataIndex].min_pais + "% – " + MATRIZ_MARGEN_MODELOS[ctx.dataIndex].max_pais + "%" } } },
+      scales:{ y:{ title:{display:true,text:"% margen neto promedio"}, ticks:{callback:v=>v+"%"} } } },
+  });
+
+  const selPais = document.getElementById("rankingPaisSelector");
+  selPais.innerHTML = PAISES_11_LISTA.map(p => `<option value="${p}">${p}</option>`).join("");
+  selPais.onchange = () => renderRankingPais(selPais.value);
+  renderRankingPais(PAISES_11_LISTA[0]);
+
+  const thead = document.getElementById("theadRanking");
+  thead.innerHTML = "<th>Familia</th><th>PVP</th>" + PAISES_11_LISTA.map(p => `<th>${p.slice(0,6)}</th>`).join("") + "<th>Modelos</th>";
+  const tbody = document.querySelector("#tablaRankingCompleta tbody");
+  tbody.innerHTML = MATRIZ_MARGEN_MODELOS.map(f =>
+    `<tr><td>${f.familia.replace(/^\d+ /,"")}</td><td>${f.pvp}€</td>` +
+    PAISES_11_LISTA.map(p => `<td>${f[p].toFixed(1)}%</td>`).join("") +
+    `<td style="font-size:11px;">${f.modelos}</td></tr>`
+  ).join("");
+}
+
+function renderRankingPais(pais){
+  const esBarefoot = f => f.familia.includes("Barefoot");
+  const ordenado = [...MATRIZ_MARGEN_MODELOS].sort((a,b) => b[pais] - a[pais]);
+  if(charts.chartRankingPais) charts.chartRankingPais.destroy();
+  charts.chartRankingPais = new Chart(document.getElementById("chartRankingPais"), {
+    type: "bar",
+    data: { labels: ordenado.map(f => f.nombre_display),
+      datasets: [{ label: "% margen en " + pais, data: ordenado.map(f => f[pais]),
+        backgroundColor: ordenado.map(f => esBarefoot(f) ? "#B8703F" : "#5C7A52") }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
+      scales:{ y:{ title:{display:true,text:"% margen neto en " + pais}, ticks:{callback:v=>v+"%"} } } },
+  });
+}
+
+construirResumen();
+construirSimulador();
+construirExplorar();
+construirCompetencia();
+construirTendencias();
+construirEspana();
+construirRanking();
+</script>
+</body>
+</html>

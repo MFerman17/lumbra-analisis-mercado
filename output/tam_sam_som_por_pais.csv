@@ -1,0 +1,11 @@
+﻿Pais,Poblacion (millones),TAM lujo/premium (M USD),Cuota online usada (%),SAM online (M USD),SOM estimado (M USD),Nota
+Suecia,10.588,1230.77,30.0,369.231,0.1108,"Cuota online supuesta (30%), sin dato propio en el dataset"
+Dinamarca,5.993,539.37,20.7,111.65,0.0335,Cuota online real del dataset
+Noruega,5.627,,,,,Faltan indicadores directos de Apparel per capita o cuota de lujo; completar manualmente
+Finlandia,5.636,271.34,30.0,81.402,0.0244,"Cuota online supuesta (30%), sin dato propio en el dataset"
+Alemania,83.577,,,,,Faltan indicadores directos de Apparel per capita o cuota de lujo; completar manualmente
+Austria,9.197,,,,,Faltan indicadores directos de Apparel per capita o cuota de lujo; completar manualmente
+Suiza,9.1,1288.74,30.0,386.623,0.116,"Cuota online supuesta (30%), sin dato propio en el dataset"
+Holanda,18.044,,,,,Faltan indicadores directos de Apparel per capita o cuota de lujo; completar manualmente
+Belgica,11.9,,,,,Faltan indicadores directos de Apparel per capita o cuota de lujo; completar manualmente
+Luxemburgo,0.682,,,,,Faltan indicadores directos de Apparel per capita o cuota de lujo; completar manualmente
