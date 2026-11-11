@@ -6,6 +6,8 @@ Pipeline en Python que alimenta un **dashboard web autocontenido**, un **kit de 
 
 **Autor:** Maikol Ferman · Análisis de datos
 
+![Pipeline: del Excel al dashboard interactivo](docs/pipeline.png)
+
 ---
 
 ## Qué demuestra este proyecto
