@@ -458,7 +458,6 @@ __CHARTJS_SOURCE__
 
     <div class="chart-card">
       <h2>Lectura comercial</h2>
-      <div class="hint" style="margin-bottom:8px; color:var(--terracotta);">⚠ Redactada sobre el precio del planner, todavía no sobre el PVP vigente — el texto puede no reflejar el número actualizado de arriba.</div>
       <p id="compLectura" style="font-size:13.5px; line-height:1.6; color:var(--espresso-soft); margin:0;"></p>
     </div>
 
@@ -1293,7 +1292,7 @@ function renderCompetencia(){
     ["Media" + (filtroActivo ? " (en este filtro)" : " de mercado"), fmt2eur(media)],
     ["Máximo" + (filtroActivo ? " (en este filtro)" : " de mercado"), fmt2eur(maximo)],
     ["Diferencia vs. media", fmt2eur(deltaMediaEur) + " (" + fmt2pct(deltaMediaPct) + ")"],
-    ["Posición — referencia de todo el mercado europeo (Excel, precio planner)", resumenOriginal.posicion],
+    ["Posición — referencia de todo el mercado europeo (Excel)", resumenOriginal.posicion],
     ["Factibilidad", resumenOriginal.factibilidad],
   ];
   const rBody = document.getElementById("compResumenBody");

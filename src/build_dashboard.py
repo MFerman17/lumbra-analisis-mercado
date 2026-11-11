@@ -440,7 +440,7 @@ def cargar_benchmark_competencia():
             "delta_media_pct": round(delta_media_pct, 4) if delta_media_pct is not None else None,
             "posicion": ws_p.cell(row=r, column=11).value,
             "lectura": ws_p.cell(row=r, column=12).value,
-            "lectura_calculada_con_planner": True,
+            "lectura_calculada_con_planner": False,
             "factibilidad": factibilidad,
         })
 
